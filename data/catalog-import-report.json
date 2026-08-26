@@ -1,0 +1,21 @@
+{
+  "database": "/Users/adamshirley/apps/bbl-booklist/app/src/main/assets/book-scout.db",
+  "source_rows": 29324,
+  "books": 28597,
+  "memberships": 29236,
+  "isbn_identifiers": 8619,
+  "skipped_missing_title": 0,
+  "inventory_records": 2664,
+  "inventory_matched_records": 698,
+  "inventory_only_books": 1966,
+  "owned_books": 2594,
+  "owned_copies": 2667,
+  "normalized_titles_with_multiple_book_records": 3277,
+  "lists": {
+    "Biblioguides": 16736,
+    "John Senior - The Thousand Good Books": 212,
+    "Plumfield Living Library": 7010,
+    "Read-Aloud Revival": 3148,
+    "Reshelving Alexandria": 2130
+  }
+}
