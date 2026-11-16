@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardOptions
@@ -46,6 +48,8 @@ private val SoftWhite = Color(0xFFF8F2FA)
 @Composable
 fun BookScoutApp(database: BookDatabase) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     var query by remember { mutableStateOf("") }
     var results by remember { mutableStateOf(database.recentBooks()) }
     var searched by remember { mutableStateOf(false) }
@@ -68,6 +72,8 @@ fun BookScoutApp(database: BookDatabase) {
     fun search() {
         results = database.search(query)
         searched = query.isNotBlank()
+        focusManager.clearFocus()
+        keyboardController?.hide()
     }
 
     MaterialTheme(

@@ -40,11 +40,14 @@ class BookDatabase(private val context: Context) {
                 .let { if (it.isNotEmpty()) return it }
         }
         val normalized = normalizeText(query)
-        val candidates = books(
-            "b.normalized_title LIKE ? OR b.normalized_author LIKE ? OR EXISTS " +
-                "(SELECT 1 FROM book_lists bx JOIN lists lx ON lx.id=bx.list_id WHERE bx.book_id=b.id AND lx.name LIKE ?)",
-            arrayOf("%$normalized%", "%$normalized%", "%$query%"),
-        )
+        val terms = normalized.split(" ").filter { it.isNotBlank() }.distinct()
+        val termClause = terms.joinToString(" AND ") {
+            "(b.normalized_title LIKE ? OR b.normalized_author LIKE ? OR EXISTS " +
+                "(SELECT 1 FROM book_lists bx JOIN lists lx ON lx.id=bx.list_id " +
+                "WHERE bx.book_id=b.id AND lx.name LIKE ?))"
+        }
+        val termArgs = terms.flatMap { term -> listOf("%$term%", "%$term%", "%$term%") }.toTypedArray()
+        val candidates = books(termClause, termArgs)
         if (candidates.isNotEmpty()) return candidates
         return books("1=1", emptyArray()).map { book ->
             book to maxOf(

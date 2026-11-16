@@ -23,6 +23,13 @@ def normalize_text(value):
     value = "".join(c for c in value if not unicodedata.combining(c)).lower()
     return re.sub(r"[^a-z0-9]+", " ", value).strip()
 
+def normalize_author(value):
+    value = (value or "").strip()
+    if ";" not in value and value.count(",") == 1:
+        last, first = (part.strip() for part in value.split(",", 1))
+        value = f"{first} {last}"
+    return normalize_text(value)
+
 def normalize_isbn(value):
     value = re.sub(r"[^0-9Xx]", "", value or "").upper()
     return value if len(value) in (10, 13) else ""
@@ -66,7 +73,7 @@ def main():
                     title, author = (row.get("title") or "").strip(), (row.get(author_field) or "").strip()
                     if not title:
                         counts["skipped_missing_title"] += 1; continue
-                    nt, na = normalize_text(title), normalize_text(author)
+                    nt, na = normalize_text(title), normalize_author(author)
                     raw_isbn = normalize_isbn(row.get("isbn") or row.get("isbn13") or "")
                     canonical_isbn, key = isbn13(raw_isbn), (nt, na)
                     book_id = isbn_books.get(canonical_isbn) if canonical_isbn else None
@@ -91,7 +98,7 @@ def main():
             authors = row.get("authors") or []
             first_author = authors[0] if authors and isinstance(authors[0], dict) else {}
             author = (row.get("primaryauthor") or first_author.get("lf", "")).strip()
-            nt, na = normalize_text(title), normalize_text(author)
+            nt, na = normalize_text(title), normalize_author(author)
             isbn_values = row.get("isbn") or {}
             if isinstance(isbn_values, dict): isbn_values = list(isbn_values.values())
             candidates = [isbn13(value) for value in isbn_values if isbn13(value)]

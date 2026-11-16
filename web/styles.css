@@ -1,0 +1,112 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #29262b;
+  color: #f8f2fa;
+  font-synthesis: none;
+  --night: #29262b;
+  --charcoal: #3c3541;
+  --purple: #ac5fdb;
+  --lavender: #e3a2ee;
+  --muted: #d0c5d3;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--night); }
+body { margin: 0; min-height: 100vh; overflow-x: hidden; background: var(--night); }
+button, input { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+
+.app-shell {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: calc(28px + env(safe-area-inset-top)) 20px calc(36px + env(safe-area-inset-bottom));
+  overflow-x: hidden;
+}
+
+.hero { margin-bottom: 24px; }
+.topline { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.top-actions { min-width: 0; margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; }
+.eyebrow { margin: 0; color: var(--lavender); font-size: .82rem; font-weight: 800; letter-spacing: .1em; }
+h1 { margin: 8px 0 0; max-width: 650px; font-size: clamp(2rem, 8.5vw, 4rem); line-height: 1.04; letter-spacing: -.04em; overflow-wrap: anywhere; }
+
+.status-pill, .quiet-button {
+  border: 1px solid #5a4f61;
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: var(--muted);
+  background: transparent;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+}
+.quiet-button { color: var(--lavender); cursor: pointer; }
+
+.scan-button {
+  width: 100%; min-height: 72px; border: 0; border-radius: 22px;
+  background: var(--purple); color: white; font-weight: 750; font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer;
+  box-shadow: 0 12px 32px rgb(0 0 0 / .18);
+}
+.scan-icon { font-size: 1.8rem; line-height: 1; }
+
+.search-form {
+  margin-top: 14px; min-height: 66px; border: 2px solid #8b7c91; border-radius: 19px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; overflow: hidden;
+  background: #302c33;
+}
+.search-form:focus-within { border-color: var(--purple); box-shadow: 0 0 0 3px rgb(172 95 219 / .14); }
+.search-icon { width: 19px; height: 19px; margin-left: 20px; border: 3px solid var(--muted); border-radius: 50%; position: relative; }
+.search-icon::after { content: ""; position: absolute; width: 9px; height: 3px; background: var(--muted); transform: rotate(45deg); right: -7px; bottom: -4px; border-radius: 4px; }
+.search-form input { width: 100%; min-width: 0; border: 0; outline: 0; padding: 20px 16px; color: white; background: transparent; font-size: 1.05rem; }
+.search-form input::placeholder { color: #a99eae; }
+.search-form button { align-self: stretch; border: 0; padding: 0 18px; color: var(--purple); background: transparent; font-weight: 850; cursor: pointer; }
+
+.results-heading { margin: 24px 2px 10px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.results-heading h2 { margin: 0; font-size: 1.08rem; }
+#catalog-count { color: #aa9faf; font-size: .8rem; }
+.results { display: grid; gap: 12px; }
+
+.book-card { padding: 20px; border-radius: 20px; background: var(--charcoal); box-shadow: 0 8px 20px rgb(0 0 0 / .12); }
+.book-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.book-topline > div { min-width: 0; }
+.book-title { margin: 0; font-size: 1.28rem; line-height: 1.22; overflow-wrap: anywhere; }
+.book-author { margin: 5px 0 0; color: var(--muted); font-size: 1rem; }
+.owned-badge { flex: 0 0 auto; border-radius: 10px; padding: 8px 11px; background: var(--purple); color: white; font-size: .72rem; font-weight: 850; }
+.owned-badge.is-owned { background: var(--lavender); color: var(--night); }
+.book-lists { margin: 14px 0 0; padding: 0; list-style: none; color: var(--lavender); }
+.book-lists li + li { margin-top: 4px; }
+.book-isbn { min-height: 1em; margin: 10px 0 0; color: #b8aebb; font-size: .78rem; }
+.owned-button { margin-top: 12px; border: 0; padding: 8px 0; color: var(--purple); background: transparent; font-weight: 750; cursor: pointer; }
+
+.empty-state { padding: 24px; border-radius: 20px; background: var(--lavender); color: var(--night); }
+.empty-state h3 { margin: 0 0 8px; font-size: 1.4rem; }
+.empty-state p { margin: 0; line-height: 1.5; }
+
+.scanner-dialog { width: min(calc(100% - 24px), 680px); padding: 18px; border: 1px solid #5d5262; border-radius: 24px; color: white; background: var(--night); }
+.scanner-dialog::backdrop { background: rgb(10 8 11 / .82); }
+.scanner-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.scanner-header h2 { margin: 5px 0 16px; }
+.close-button { border: 0; color: white; background: transparent; font-size: 2.2rem; line-height: .8; cursor: pointer; }
+.video-frame { position: relative; overflow: hidden; aspect-ratio: 4/3; border-radius: 18px; background: #161318; }
+.video-frame video { width: 100%; height: 100%; object-fit: cover; }
+.target-box { position: absolute; inset: 30% 10%; border: 3px solid var(--lavender); border-radius: 16px; box-shadow: 0 0 0 999px rgb(0 0 0 / .24); }
+#scanner-message { margin: 14px 4px 2px; color: var(--muted); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+@media (min-width: 600px) {
+  .app-shell { padding-inline: 28px; }
+  .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .book-card { min-height: 250px; display: flex; flex-direction: column; }
+  .owned-button { margin-top: auto; align-self: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .status-pill { display: none; }
+  .search-icon { margin-left: 16px; }
+  .search-form input { padding-inline: 12px 8px; font-size: .96rem; }
+  .search-form button { padding-inline: 10px; font-size: .78rem; }
+  .results-heading { align-items: flex-start; }
+  #catalog-count { max-width: 110px; text-align: right; }
+}
