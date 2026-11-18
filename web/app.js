@@ -131,7 +131,7 @@ function escapeHtml(value) {
 }
 
 async function loadCatalog() {
-  const response = await fetch("./catalog.json");
+  const response = await fetch("./catalog.json?v=20261118-isbn2");
   if (!response.ok) throw new Error(`Catalog download failed (${response.status})`);
   const catalog = await response.json();
   state.books = catalog.books;

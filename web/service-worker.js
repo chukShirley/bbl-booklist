@@ -1,10 +1,10 @@
-const CACHE = "book-scout-v2-isbn-20261118";
+const CACHE = "book-scout-v3-isbn-20261118";
 const CORE = [
   "./",
   "./index.html",
   "./styles.css",
-  "./app.js",
-  "./catalog.json",
+  "./app.js?v=20261118-isbn2",
+  "./catalog.json?v=20261118-isbn2",
   "./manifest.webmanifest",
   "./icons/icon.svg",
   "./icons/icon-192.png",
