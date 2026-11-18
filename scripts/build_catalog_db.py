@@ -58,6 +58,34 @@ CREATE INDEX source_records_book_index ON source_records(book_id);
 CREATE INDEX source_records_list_index ON source_records(list_id);
 """
 
+def apply_supported_isbns(db):
+    """Apply only reviewed additions, failing closed on source drift or conflicts."""
+    db.execute("CREATE TABLE enrichment_identifiers(value TEXT PRIMARY KEY)")
+    path = DATA / "supported-isbn-additions.json"
+    if not path.exists():
+        return
+    payload = json.loads(path.read_text())
+    assert payload["version"] == 1
+    for book in payload["books"]:
+        row = db.execute("SELECT title,author FROM books WHERE id=?", (book["book_id"],)).fetchone()
+        assert row == (book["title"], book["author"]), "Catalog changed; re-review ISBN mapping"
+        for value in book["isbns"]:
+            assert valid_isbn(value), f"Invalid ISBN: {value}"
+            existing = db.execute("SELECT book_id FROM book_identifiers WHERE scheme=? AND value=?", ("ISBN13" if len(value)==13 else "ISBN10", value)).fetchone()
+            assert not existing or existing[0] == book["book_id"], "ISBN conflict requires review"
+            if not existing:
+                db.execute("INSERT INTO book_identifiers VALUES(?,?,?)", (book["book_id"], "ISBN13" if len(value)==13 else "ISBN10", value))
+                db.execute("INSERT INTO enrichment_identifiers VALUES(?)", (value,))
+
+
+def valid_isbn(value):
+    if re.fullmatch(r"\d{13}", value) and value.startswith(("978", "979")):
+        return sum(int(c)*(1 if i%2==0 else 3) for i,c in enumerate(value))%10==0
+    if re.fullmatch(r"\d{9}[\dX]", value):
+        return sum((10-i)*(10 if c=="X" else int(c)) for i,c in enumerate(value))%11==0
+    return False
+
+
 def main():
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.unlink(missing_ok=True)
@@ -119,6 +147,8 @@ def main():
             if isinstance(barcode, dict): barcode = next(iter(barcode.values()), "")
             db.execute("INSERT INTO inventory_records(book_id,librarything_book_id,barcode,raw_json) VALUES(?,?,?,?)", (book_id, str(external_id), str(barcode or ""), json.dumps(row, ensure_ascii=False, separators=(",", ":"))))
         db.executemany("INSERT INTO import_metadata VALUES(?,?)", [("schema_version", "1"), ("deduplication", "ISBN-13, then exact normalized title and author"), ("inventory_source", INVENTORY.name)])
+    with db:
+        apply_supported_isbns(db)
     report = {
         "database": str(OUTPUT), "source_rows": counts["source_records"], "books": counts["books"],
         "memberships": db.execute("SELECT COUNT(*) FROM book_lists").fetchone()[0],

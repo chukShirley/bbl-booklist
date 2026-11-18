@@ -1,0 +1,15 @@
+{
+  "books_receiving_additions": 10863,
+  "added_isbn_identifiers": 119660,
+  "held_transfer_groups": 1134,
+  "previous_catalog_books": 28609,
+  "source_catalog_sha256": "1215ada87c1c4b18c94525a655dc18926ae6d8f738f28f5341dc5173d62c3054",
+  "original_rows_lists_ownership_and_keys_preserved": true,
+  "original_identifiers_preserved": true,
+  "added_identifier_checks": 119660,
+  "final_identifier_count": 128279,
+  "before_books_with_isbns": 5659,
+  "after_books_with_isbns": 14537,
+  "book_count": 28609,
+  "books_without_isbns": 14072
+}

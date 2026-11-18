@@ -74,3 +74,28 @@ It writes a summary to `data/catalog-import-report.json`. The current LibraryThi
 collection export in `data/raw/inventory/` populates the separate inventory tables.
 During development, clear the app's storage or uninstall it to load a newly rebuilt
 database asset.
+
+
+## Reviewed ISBN additions (2026-11-18)
+
+Book Scout retains all 28,609 original records, list memberships, primary ISBNs,
+ownership flags, and stable ownership keys. A new `isbns` array supports searching
+all accepted ISBN-10/13 and alternate editions. Native SQLite search already
+supports these identifiers; existing Android installations need a rebuilt APK.
+
+The reviewed public supplement `data/supported-isbn-additions.json` adds 119,660
+identifiers to 10,863 records. ISBN coverage rises from 5,659 to 14,537 books;
+14,072 remain without. It reuses accepted BBL Recommends research without
+importing its owned-book recommendation policy. No ownership claims change.
+The 1,134 ambiguous transfer groups remain in the website workspace for review;
+no identifier reassignment or duplicate merges are applied here.
+
+Every rebuild validates target ID/title/author, ISBN checksums and conflicts.
+Original primary ISBNs determine ownership keys, so enrichment preserves saved
+ownership choices. Private research queues, inventory and notes are excluded.
+Aggregate verification: `data/isbn-enrichment-report.json`. Rollback: revert the
+update commit and rebuild/deploy.
+
+Validation: `python3 tests/isbn_enrichment.py` tests mappings and conflicts;
+`node tests/isbn_search.cjs` checks all 128,279 ISBN searches using client search
+functions, plus legacy and hyphenated ISBN queries.

@@ -1,9 +1,9 @@
 {
-  "database": "/Users/adamshirley/apps/bbl-booklist/app/src/main/assets/book-scout.db",
+  "database": "/private/tmp/bbl-booklist-source/app/src/main/assets/book-scout.db",
   "source_rows": 29324,
   "books": 26901,
   "memberships": 29236,
-  "isbn_identifiers": 8619,
+  "isbn_identifiers": 128279,
   "skipped_missing_title": 0,
   "inventory_records": 2664,
   "inventory_matched_records": 956,

@@ -1,4 +1,4 @@
-const CACHE = "book-scout-v1";
+const CACHE = "book-scout-v2-isbn-20261118";
 const CORE = [
   "./",
   "./index.html",

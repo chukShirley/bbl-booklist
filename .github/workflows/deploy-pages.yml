@@ -31,6 +31,11 @@ jobs:
           python3 scripts/build_catalog_db.py
           python3 scripts/build_web_catalog.py
 
+      - name: Check ISBN enrichment
+        run: |
+          python3 tests/isbn_enrichment.py
+          node tests/isbn_search.cjs
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 

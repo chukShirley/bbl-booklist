@@ -17,8 +17,11 @@ def main():
         "FROM books ORDER BY title COLLATE NOCASE,author COLLATE NOCASE"
     ).fetchall()
     isbns = dict(db.execute(
-        "SELECT book_id,value FROM book_identifiers WHERE scheme='ISBN13' ORDER BY book_id"
+        "SELECT book_id,value FROM book_identifiers WHERE scheme='ISBN13' AND value NOT IN (SELECT value FROM enrichment_identifiers) ORDER BY book_id"
     ))
+    all_isbns = {}
+    for book_id, value in db.execute("SELECT book_id,value FROM book_identifiers ORDER BY length(value) DESC,value"):
+        all_isbns.setdefault(book_id, []).append(value)
     owned_ids = {row[0] for row in db.execute("SELECT book_id FROM inventory")}
     memberships = {}
     for book_id, name in db.execute(
@@ -36,6 +39,7 @@ def main():
             "t": title,
             "a": author,
             "i": isbn or "",
+            "isbns": all_isbns.get(book_id, []),
             "l": list_names,
             "o": book_id in owned_ids,
             "s": " ".join([normalized_title, normalized_author, " ".join(list_names).lower(), isbn or ""]),

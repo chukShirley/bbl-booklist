@@ -1,5 +1,6 @@
 const state = {
   books: [],
+  isbnIndex: new Map(),
   overrides: new Map(),
   query: "",
   installPrompt: null,
@@ -47,11 +48,22 @@ async function setOwned(book, owned) {
   renderResults();
 }
 
+function buildIsbnIndex(books) {
+  const index = new Map();
+  for (const book of books) {
+    for (const isbn of new Set((book.isbns || [book.i]).filter(Boolean))) {
+      if (!index.has(isbn)) index.set(isbn, []);
+      index.get(isbn).push(book);
+    }
+  }
+  return index;
+}
+
 function searchBooks(rawQuery) {
   const normalized = normalize(rawQuery);
   const isbn = normalizeIsbn(rawQuery);
   if ((isbn.length === 10 || isbn.length === 13) && /^\d{9}[\dX]$|^\d{13}$/.test(isbn)) {
-    return state.books.filter(book => book.i === isbn).slice(0, 100);
+    return (state.isbnIndex.get(isbn) || []).slice(0, 100);
   }
   const terms = [...new Set(normalized.split(" ").filter(Boolean))];
   if (!terms.length) return state.books.filter(book => book.l.length).slice(0, 30);
@@ -83,7 +95,9 @@ function bookCard(book) {
     item.textContent = `• ${name}`;
     lists.append(item);
   }
-  card.querySelector(".book-isbn").textContent = book.i ? `ISBN ${book.i}` : "";
+  const isbns = (book.isbns || [book.i]).filter(Boolean);
+  card.querySelector(".book-isbn").textContent = isbns.length
+    ? `ISBN ${book.i || isbns[0]}${isbns.length > 1 ? ` (+${isbns.length - 1} more searchable)` : ""}` : "";
   const toggle = card.querySelector(".owned-button");
   toggle.textContent = owned ? "Mark as not owned" : "We bought this";
   toggle.addEventListener("click", () => setOwned(book, !owned));
@@ -121,6 +135,7 @@ async function loadCatalog() {
   if (!response.ok) throw new Error(`Catalog download failed (${response.status})`);
   const catalog = await response.json();
   state.books = catalog.books;
+  state.isbnIndex = buildIsbnIndex(state.books);
   renderResults();
   requestAnimationFrame(() => window.scrollTo(0, 0));
   loadOverrides().then(renderResults).catch(error => console.warn("Ownership overrides unavailable", error));
